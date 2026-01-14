@@ -2,7 +2,7 @@
 
 **Anonymiser** is a **CLI-first database anonymisation tool** for web projects.
 
-It allows teams to safely generate **anonymized, realistic database dumps** for development, QA, and review — **without ever exposing production data**.
+It allows teams to safely generate **anonymised, realistic database dumps** for development, QA, and review — **without ever exposing production data**.
 
 Designed for:
 - MySQL & PostgreSQL
@@ -68,7 +68,7 @@ npx anonymiser
 
 ### Dump Mode (Default & Recommended)
 
-Reads from a database or dump and produces an anonymized, gzipped SQL dump.
+Reads from a database or dump and produces an anonymised, gzipped SQL dump.
 
 ```bash
 npx anonymiser run
@@ -82,7 +82,7 @@ npx anonymiser run
 
 ### Direct Mode (Dangerous – Explicit Opt-In)
 
-Writes anonymized data directly into a database.
+Writes anonymised data directly into a database.
 
 ```bash
 npx anonymiser run --direct
@@ -112,7 +112,7 @@ export default {
   },
 
   output: {
-    file: './anonymized.sql.gz'
+    file: './anonymised.sql.gz'
   },
 
   tables: {
@@ -206,7 +206,7 @@ The CLI can generate the configuration file automatically.
 
 ## Output
 
-- Gzipped SQL dump (`anonymized.sql.gz`)
+- Gzipped SQL dump (`anonymised.sql.gz`)
 - Terminal summary
 - Machine-readable JSON report
 
@@ -229,7 +229,7 @@ Compliance depends on correct usage.
 
 Best practices:
 - Never expose production credentials
-- Never sync anonymized data back to production
+- Never sync anonymised data back to production
 - Prefer truncate over encrypt
 - Keep anonymisation irreversible
 

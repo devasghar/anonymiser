@@ -1,0 +1,239 @@
+# Anonymizer
+
+**Anonymizer** is a **CLI-first database anonymization tool** for web projects.
+
+It allows teams to safely generate **anonymized, realistic database dumps** for development, QA, and review — **without ever exposing production data**.
+
+Designed for:
+- MySQL & PostgreSQL
+- Modern web stacks (Node.js, CI/CD, cloud)
+- Regulated environments (GDPR, SOC2, ISO-aligned workflows)
+
+Distributed as an **npm package** and executed via **npx** — no global installs, no language mismatch.
+
+---
+
+## Why Anonymizer?
+
+Using production databases in development is:
+- **Dangerous** (data leaks happen)
+- **Illegal** under GDPR in most cases
+- **Operationally risky** (accidental writes, corruption)
+
+Anonymizer ensures:
+- No real personal data leaves secure environments
+- Anonymized data remains **structurally realistic**
+- Teams can work with confidence and speed
+
+---
+
+## Key Features
+
+- Database-first (MySQL default, PostgreSQL supported)
+- Gzipped SQL dump output (`.sql.gz`)
+- Deterministic anonymization (referential integrity preserved)
+- Safe by default (dump mode, no direct writes)
+- Config-driven with optional interactive CLI prompts
+- Audit-friendly summaries and reports
+- No Python, no Ruby — Node.js only
+
+---
+
+## Installation
+
+No installation required.
+
+Run directly via:
+
+npx anonymizer
+
+### Requirements
+
+- Node.js 18 or higher
+
+---
+
+## Supported Databases
+
+| Database | Status |
+|---------|--------|
+| MySQL / MariaDB | Default |
+| PostgreSQL | Supported |
+
+---
+
+## Execution Modes
+
+### Dump Mode (Default & Recommended)
+
+Reads from a database or dump and produces an anonymized, gzipped SQL dump.
+
+npx anonymizer run
+
+- No writes to source DB
+- Safest for regulated environments
+- Ideal for CI/CD pipelines
+
+---
+
+### Direct Mode (Dangerous – Explicit Opt-In)
+
+Writes anonymized data directly into a database.
+
+npx anonymizer run --direct
+
+Warnings:
+- Strong warning shown
+- Requires confirmation
+- Never use against production
+
+---
+
+## Configuration
+
+Anonymizer is driven by a config file named:
+
+anonymizer.config.ts
+
+### Example Configuration
+
+export default {
+  database: {
+    type: 'mysql',
+    mode: 'dump',
+    url: process.env.DATABASE_URL
+  },
+
+  output: {
+    file: './anonymized.sql.gz'
+  },
+
+  tables: {
+    users: {
+      email: { action: 'update', type: 'email' },
+      name: { action: 'update', type: 'fullName' },
+      phone: { action: 'update', type: 'phone' },
+      national_id: {
+        action: 'encrypt',
+        algorithm: 'aes-256-gcm',
+        keyEnv: 'ANONYMIZER_SECRET'
+      }
+    },
+
+    audit_logs: 'truncate'
+  }
+}
+
+---
+
+## Column Actions
+
+Each column supports exactly one action.
+
+### truncate
+
+Removes data completely.
+
+audit_logs: 'truncate'
+
+Recommended for logs, events, and sessions.
+
+---
+
+### update (Replace with Dummy Data)
+
+Replaces values with realistic fake data.
+
+email: { action: 'update', type: 'email' }
+
+Supported text-based types:
+- email
+- firstName
+- lastName
+- fullName
+- phone
+- address
+- city
+- country
+- ip
+- uuid
+- text
+
+---
+
+### encrypt (Reversible – Advanced Use)
+
+Encrypts values using symmetric encryption.
+
+ssn: {
+  action: 'encrypt',
+  algorithm: 'aes-256-gcm',
+  keyEnv: 'ANONYMIZER_SECRET'
+}
+
+Notes:
+- This is pseudonymization, not anonymization
+- Key must come from environment variables
+- Intended for controlled workflows only
+
+---
+
+## Interactive CLI
+
+Run without arguments to launch guided setup:
+
+npx anonymizer
+
+The CLI can generate the configuration file automatically.
+
+---
+
+## Output
+
+- Gzipped SQL dump (`anonymized.sql.gz`)
+- Terminal summary
+- Machine-readable JSON report
+
+---
+
+## CI/CD Usage
+
+Example GitHub Actions step:
+
+- name: Anonymize Database
+  run: npx anonymizer run --config anonymizer.config.ts
+
+---
+
+## GDPR & Compliance Notes
+
+Compliance depends on correct usage.
+
+Best practices:
+- Never expose production credentials
+- Never sync anonymized data back to production
+- Prefer truncate over encrypt
+- Keep anonymization irreversible
+
+This tool does not replace legal advice.
+
+---
+
+## Development
+
+npm install
+npm run dev
+npm run build
+
+---
+
+## License
+
+MIT License
+
+---
+
+## Philosophy
+
+- Human decides WHAT goes live.
+- Machine executes HOW it happens.
